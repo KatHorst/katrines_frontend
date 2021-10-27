@@ -1,0 +1,19 @@
+.sektion {
+    background-color:orange;
+    color:rgb(139, 0, 0);
+    text-align: center;
+    padding:100px 0;
+}
+
+#knap {
+    margin-top: 10px;
+}
+
+#box {
+    margin-top: 10px;
+}
+
+#sol {
+    height: 100px;
+    width: 150px;
+}
