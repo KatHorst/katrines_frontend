@@ -1,23 +1,22 @@
-var y;
-var sentiment;
-var pesos;
-var ml5;
+let text;
+let sentiment;
+let pesos;
 
-sentiment = ml5.sentiment("movieReviews", "modelReady");
-console.log(sentiment);
+sentiment = ml5.sentiment("movieReviews");
+console.log('ml5 version:', ml5.version);
 
 function tohappy() {
-    var x = document.getElementById("happy").value
-    var y = x.split(" ");
-    console.log(y); {
-        return y;
-    } 
+    let split_text = document.getElementById("happy").value;
+    const prediction = sentiment.predict(split_text);
+    text = split_text.split(" ");
+    console.log(text); 
+    console.log(prediction);
 }
 
 function place() {
-pesos = document.getElementById("happy");
-document.getElementById("insert").innerHTML = pesos.value;
-console.log(pesos);
+    pesos = document.getElementById("happy");
+    document.getElementById("insert").innerHTML = pesos.value;
+    console.log(pesos);
 }
 
 
