@@ -1,4 +1,3 @@
-let test_word = "";
 const sentiment = ml5.sentiment("movieReviews");
 console.log('ml5 version:', ml5.version);
 
@@ -21,13 +20,12 @@ function toHappy() {
                 console.log(split_text[i], "Good word :)")
             } else if (prediction.score < 0.5) {
                 console.log(split_text[i], "is a bad word :'(");
-                place(split_text[i].toLowerCase())
+                replaced_split_text[i] = place(split_text[i].toLowerCase())
             } else {
                 console.log("Unpredicted outcome");
             }
         }
     }
-    console.log(test_word);
 }
 
 function place(inWord) {
@@ -52,14 +50,12 @@ function place(inWord) {
     if (randomWord >= 0) {
         console.log("Picked word number: " + (randomWord + 1) + " out of " + data[0].meta.ants[0].length + " possible.");
         console.log("The opposite is: " + data[0].meta.ants[0][randomWord]);
-        console.log(data[0].meta.ants[0][randomWord]);
-        test_word = data[0].meta.ants[0][randomWord];
         return(data[0].meta.ants[0][randomWord]);
     }}
 }
 
 function chooseWord(data, word) {
-    console.log("\n\nThe original word was: " + word + "\nAnd this is the length of the array for this word: " + data[0].meta.ants[0].length);
+    console.log("The original word was: " + word + "\nAnd this is the length of the array for this word: " + data[0].meta.ants[0].length);
     if (data[0].meta.ants[0].length >= 1) {
         let numberOfWords = data[0].meta.ants[0].length;
         let randomWord = Math.floor(Math.random() * numberOfWords)
