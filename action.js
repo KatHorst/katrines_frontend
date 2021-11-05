@@ -5,6 +5,20 @@ function textToArray(text) {
     return text.split(" ");
 }
 
+function arrayToString(text) {
+    let newText = text.join(" ");
+    return newText = newText.charAt(0).toUpperCase() + newText.slice(1);
+}
+
+function addElementToPage(text) {
+    const para = document.createElement("p");
+    const node = document.createTextNode(text);
+    para.appendChild(node);
+
+    const element = document.getElementById("newPara");
+    element.appendChild(para);
+}
+
 function toHappy() {
     let text = document.getElementById("happy").value;
     let prediction = sentiment.predict(text);
@@ -12,15 +26,41 @@ function toHappy() {
     let replaced_split_text = split_text;
     console.log(text);
     console.log(prediction);
-    if (prediction.score < 0.5) {
+    if (prediction.score < 0.7) {
         for (let i = 0; i < split_text.length; i++) {
             prediction = sentiment.predict(split_text[i]);
             console.log(prediction.score);
-            if (prediction.score > 0.5) {
+            if (prediction.score > 0.6) {
                 console.log(split_text[i], "Good word :)")
-            } else if (prediction.score < 0.5) {
+            } else if (prediction.score < 0.6) {
                 console.log(split_text[i], "is a bad word :'(");
-                replaced_split_text[i] = place(split_text[i].toLowerCase())
+
+                let apiData = {
+                    url: 'https://dictionaryapi.com/api/v3/references/thesaurus/json/',
+                    word: split_text[i].toLowerCase(),
+                    key: '?key=71bc53b3-250e-4d40-9e89-11f3712c4100',
+                }
+                
+                let {url, word, key} = apiData;
+                let apiUrl = `${url}${word}${key}`
+            
+                fetch(apiUrl)
+                    .then( (data) => data.json())
+                    .then( (word) => createFile(word))
+                
+                let createFile = (data) => {
+                    let randomWord = chooseWord(data, word);
+                    if (randomWord >= 0) {
+                        console.log("Picked word number: " + (randomWord + 1) + " out of " + data[0].meta.ants[0].length + " possible.");
+                        console.log("The opposite is: " + data[0].meta.ants[0][randomWord]);
+                        replaced_split_text[i] = (data[0].meta.ants[0][randomWord]);
+                        console.log(replaced_split_text)
+
+                        let happySentence = arrayToString(replaced_split_text);
+                        console.log(happySentence);
+                        addElementToPage(happySentence);
+                    }
+                }
             } else {
                 console.log("Unpredicted outcome");
             }

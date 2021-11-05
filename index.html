@@ -11,16 +11,13 @@
 <body>
     <!---En sektion-->
     <div class="sektion">
-        <h1>Vend det til noget positivt</h1>
+        <h1>Turn that frown upside down</h1>
         <img id="sol" src="./Resources/Image/Sol.png" alt="">
-        <p>Skriv din tekst her:</p>
-        <form>
-            <input type="text" id="happy" value="This is stupid"/>
-        </form>
-        <div id="knap">
-        <button onclick="toHappy()">Fang følelsen</button>
-        <button onclick="place()">Bliv glad</button>
-        </div>
+        <form action=""><input type="number" placeholder="0.5" min="0.0" max="1.0"></form>
+        <p>Let us turn that around for you:</p>
+        <form><input type="text" id="happy" value="This is stupid"/></form>
+        <div id="knap"><button onclick="toHappy()">Turn it around</button></div>
+        <div id="newPara"></div>
     </div>
     <script src="action.js"></script> 
 </body>
