@@ -20,7 +20,11 @@ function addElementToPage(text) {
 }
 
 function toHappy() {
+
+    //needs to be an argument 
     let text = document.getElementById("happy").value;
+
+
     let prediction = sentiment.predict(text);
     let split_text = textToArray(text);
     let replaced_split_text = split_text;
@@ -57,7 +61,7 @@ function toHappy() {
                         console.log(replaced_split_text)
 
                         let happySentence = arrayToString(replaced_split_text);
-                        console.log(happySentence);
+                        console.log("A HAPPY SENTENCE", happySentence);
                         addElementToPage(happySentence);
                     }
                 }
@@ -65,6 +69,7 @@ function toHappy() {
                 console.log("Unpredicted outcome");
             }
         }
+        console.log("A SECOND HAPPY SENTENCE", happySentence);
     }
 }
 
@@ -103,5 +108,21 @@ function chooseWord(data, word) {
     } else {
         console.log(data[0].meta.ants[0].length);
         console.log("There are no antonyms for this word.");
+    }
+}
+
+
+function getAllElements() {
+    let all = document.getElementsByTagName("*");
+
+    console.log(all.length);
+
+    for (let [key, value] of Object.entries(all)) {
+        console.log(`${key}: ${value}`);
+        if (value == '[object HTMLParagraphElement]' || value == '[object HTMLTitleElement]') {
+            console.log("A P or TITLE ELEMENT HAS BEEN FOUND");
+        } else {
+            console.log("nah");
+        }
     }
 }
