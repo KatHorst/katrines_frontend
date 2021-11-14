@@ -19,11 +19,11 @@ function addElementToPage(text) {
     element.appendChild(para);
 }
 
-function toHappy() {
+function toHappy(strOfWordsToReplace) {
 
-    //needs to be an argument 
+    //arrOfWords.... should be text and become a string instead of an array
     let text = document.getElementById("happy").value;
-
+    //let text = strOfWordsToReplace;
 
     let prediction = sentiment.predict(text);
     let split_text = textToArray(text);
@@ -69,7 +69,6 @@ function toHappy() {
                 console.log("Unpredicted outcome");
             }
         }
-        console.log("A SECOND HAPPY SENTENCE", happySentence);
     }
 }
 
@@ -113,14 +112,22 @@ function chooseWord(data, word) {
 
 
 function getAllElements() {
-    let all = document.getElementsByTagName("*");
+    let allParagraphs = document.getElementsByTagName("p");
+    let allH1 = document.getElementsByTagName("h1");
+    let allH2 = document.getElementsByTagName("h2");
+    let allH3 = document.getElementsByTagName("h3");
+    let allH4 = document.getElementsByTagName("h4");
+    let allH5 = document.getElementsByTagName("h5");
 
-    console.log(all.length);
+    console.log(allParagraphs.length);
 
-    for (let [key, value] of Object.entries(all)) {
+    for (let [key, value] of Object.entries(allParagraphs)) {
         console.log(`${key}: ${value}`);
-        if (value == '[object HTMLParagraphElement]' || value == '[object HTMLTitleElement]') {
+        if (value == '[object HTMLParagraphElement]' || value == '[object HTMLHeadingElement]' || value == '[object HTMLInputElement]') {
             console.log("A P or TITLE ELEMENT HAS BEEN FOUND");
+            console.log(value.innerHTML);
+            value.innerHTML = toHappy(value.innerHTML);
+            //value.value = "THIS HAS ALSO NOW CHANGED";
         } else {
             console.log("nah");
         }
