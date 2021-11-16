@@ -19,15 +19,17 @@ function addElementToPage(text) {
     element.appendChild(para);
 }
 
-function toHappy() {
+function toHappy(strToBeReplaced) {
 
     //needs to be an argument 
-    let text = document.getElementById("happy").value;
+    //let text = document.getElementById("happy").value;
+    let text = strToBeReplaced;
 
 
     let prediction = sentiment.predict(text);
     let split_text = textToArray(text);
     let replaced_split_text = split_text;
+    let happySentence;
     console.log(text);
     console.log(prediction);
     if (prediction.score < 0.7) {
@@ -52,7 +54,7 @@ function toHappy() {
                     .then( (data) => data.json())
                     .then( (word) => createFile(word))
                 
-                let createFile = (data) => {
+                function createFile(data) {
                     let randomWord = chooseWord(data, word);
                     if (randomWord >= 0) {
                         console.log("Picked word number: " + (randomWord + 1) + " out of " + data[0].meta.ants[0].length + " possible.");
@@ -60,17 +62,25 @@ function toHappy() {
                         replaced_split_text[i] = (data[0].meta.ants[0][randomWord]);
                         console.log(replaced_split_text)
 
-                        let happySentence = arrayToString(replaced_split_text);
+                        happySentence = arrayToString(replaced_split_text);
                         console.log("A HAPPY SENTENCE", happySentence);
-                        addElementToPage(happySentence);
+                        console.log(split_text.length);
+
+                        //because of fetch being async it is run at the very end
+                        //which leads us to have to need to check when to add the 
+                        //new sentence. WHICH DOESNT MATTER CUS WERE NOT ADDING SENTENCES ONLY REPLACING
+                        /*if (i === (split_text.length - 1)){
+                            addElementToPage(happySentence);
+                            return 0;
+                        }*/
                     }
                 }
             } else {
                 console.log("Unpredicted outcome");
             }
         }
-        console.log("A SECOND HAPPY SENTENCE", happySentence);
     }
+    console.log("A SECOND HAPPY SENTENCE", happySentence);
 }
 
 function place(inWord) {
@@ -111,16 +121,16 @@ function chooseWord(data, word) {
     }
 }
 
-
 function getAllElements() {
-    let all = document.getElementsByTagName("*");
+    let allParagraphs = document.getElementsByTagName("p");
 
-    console.log(all.length);
+    console.log(allParagraphs.length);
 
-    for (let [key, value] of Object.entries(all)) {
+    for (let [key, value] of Object.entries(allParagraphs)) {
         console.log(`${key}: ${value}`);
-        if (value == '[object HTMLParagraphElement]' || value == '[object HTMLTitleElement]') {
-            console.log("A P or TITLE ELEMENT HAS BEEN FOUND");
+        if (value == '[object HTMLParagraphElement]' || value == '[object HTMLHeadingElement]') {
+            value.innerHTML = toHappy(value.innerHTML);
+            
         } else {
             console.log("nah");
         }
