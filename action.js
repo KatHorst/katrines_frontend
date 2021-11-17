@@ -1,7 +1,7 @@
 const sentiment = ml5.sentiment("movieReviews");
 console.log('ml5 version:', ml5.version);
 
-function textToArray(text) {
+function stringToArray(text) {
     return text.split(" ");
 }
 
@@ -26,7 +26,7 @@ function toHappy(strToBeReplaced) {
     //let text = strToBeReplaced;
 
     let prediction = sentiment.predict(text);
-    let split_text = textToArray(text);
+    let split_text = stringToArray(text);
     let replaced_split_text = split_text;
     let happySentence;
     console.log(text);
@@ -64,12 +64,17 @@ function toHappy(strToBeReplaced) {
                 
                 function createFile(data) {
                     let randomWord = chooseWord(data, word);
-                    if (randomWord >= 0) {
+                    if (randomWord  >= 0) {
+
                         console.log("Picked word number: " + (randomWord + 1) + " out of " + data[0].meta.ants[0].length + " possible.");
                         console.log("The opposite is: " + data[0].meta.ants[0][randomWord]);
+
                         replaced_split_text[i] = (data[0].meta.ants[0][randomWord]);
+
                         console.log(replaced_split_text)
+
                         happySentence = arrayToString(replaced_split_text);
+
                         console.log("A HAPPY SENTENCE", happySentence);
                         console.log(split_text.length);
 
@@ -91,18 +96,16 @@ function toHappy(strToBeReplaced) {
 }
 
 function chooseWord(data, word) {
-
-
-    let numberOfWords;
-    numberOfWords= data[0].meta.ants[0].length;
-    console.log(numberOfWords);
-
-    //console.log("The original word was: " + word + "\nAnd this is the length of the array for this word: " + data[0].meta.ants[0].length);
-    if (data[0].meta.ants[0].length >= 1) {
-        let randomWord = Math.floor(Math.random() * numberOfWords)
-        return randomWord
+    if (data[0].meta.ants[0] !== undefined) {
+        let numberOfWords;
+        numberOfWords = data[0].meta.ants[0].length;
+        //console.log("The original word was: " + word + "\nAnd this is the length of the array for this word: " + data[0].meta.ants[0].length);
+        if (data[0].meta.ants[0].length >= 1) {
+            let randomWord = Math.floor(Math.random() * numberOfWords)
+            return randomWord
+        } 
     } else {
-        console.log(data[0].meta.ants[0].length);
+
         console.log("There are no antonyms for this word.");
     }
 }
@@ -123,7 +126,7 @@ function getAllElements() {
 }
 
 function fetching(apiUrl) {
-    //const response = await fetch(apiUrl);
+    //const response = await fetch(apiUrl).then( (data) => data.json())
     console.log(response);
     return response;
 }
