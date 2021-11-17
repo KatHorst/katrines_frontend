@@ -22,9 +22,8 @@ function addElementToPage(text) {
 function toHappy(strToBeReplaced) {
 
     //needs to be an argument 
-    //let text = document.getElementById("happy").value;
-    let text = strToBeReplaced;
-
+    let text = document.getElementById("happy").value;
+    //let text = strToBeReplaced;
 
     let prediction = sentiment.predict(text);
     let split_text = textToArray(text);
@@ -32,13 +31,22 @@ function toHappy(strToBeReplaced) {
     let happySentence;
     console.log(text);
     console.log(prediction);
-    if (prediction.score < 0.7) {
+
+    let sensitivity = parseFloat(document.getElementById("number").value);
+    if (Number.isNaN(sensitivity)) {
+        sensitivity = 0.5;
+        console.log(sensitivity);
+    } else {
+        console.log(sensitivity);
+    }
+
+    if (prediction.score < sensitivity) {
         for (let i = 0; i < split_text.length; i++) {
             prediction = sentiment.predict(split_text[i]);
             console.log(prediction.score);
-            if (prediction.score > 0.6) {
+            if (prediction.score > sensitivity) {
                 console.log(split_text[i], "Good word :)")
-            } else if (prediction.score < 0.6) {
+            } else if (prediction.score <= sensitivity) {
                 console.log(split_text[i], "is a bad word :'(");
 
                 let apiData = {
@@ -61,7 +69,6 @@ function toHappy(strToBeReplaced) {
                         console.log("The opposite is: " + data[0].meta.ants[0][randomWord]);
                         replaced_split_text[i] = (data[0].meta.ants[0][randomWord]);
                         console.log(replaced_split_text)
-
                         happySentence = arrayToString(replaced_split_text);
                         console.log("A HAPPY SENTENCE", happySentence);
                         console.log(split_text.length);
@@ -69,10 +76,10 @@ function toHappy(strToBeReplaced) {
                         //because of fetch being async it is run at the very end
                         //which leads us to have to need to check when to add the 
                         //new sentence. WHICH DOESNT MATTER CUS WERE NOT ADDING SENTENCES ONLY REPLACING
-                        /*if (i === (split_text.length - 1)){
-                            addElementToPage(happySentence);
-                            return 0;
-                        }*/
+                        if (i === (split_text.length - 1)){
+                            //addElementToPage(happySentence);
+                            return happySentence;
+                        }
                     }
                 }
             } else {
@@ -83,36 +90,15 @@ function toHappy(strToBeReplaced) {
     console.log("A SECOND HAPPY SENTENCE", happySentence);
 }
 
-function place(inWord) {
-
-    const apiData = {
-        url: 'https://dictionaryapi.com/api/v3/references/thesaurus/json/',
-        word: inWord,
-        key: '?key=71bc53b3-250e-4d40-9e89-11f3712c4100',
-    }
-    
-    const {url, word, key} = apiData;
-    const apiUrl = `${url}${word}${key}`
-
-    fetch(apiUrl)
-        .then( (data) => data.json())
-        .then( (word) => createFile(word))
-
-    const createFile = (data) => {
-        let parsed = JSON.stringify(data, null, 4);
-
-    const randomWord = chooseWord(data, word);
-    if (randomWord >= 0) {
-        console.log("Picked word number: " + (randomWord + 1) + " out of " + data[0].meta.ants[0].length + " possible.");
-        console.log("The opposite is: " + data[0].meta.ants[0][randomWord]);
-        return(data[0].meta.ants[0][randomWord]);
-    }}
-}
-
 function chooseWord(data, word) {
-    console.log("The original word was: " + word + "\nAnd this is the length of the array for this word: " + data[0].meta.ants[0].length);
+
+
+    let numberOfWords;
+    numberOfWords= data[0].meta.ants[0].length;
+    console.log(numberOfWords);
+
+    //console.log("The original word was: " + word + "\nAnd this is the length of the array for this word: " + data[0].meta.ants[0].length);
     if (data[0].meta.ants[0].length >= 1) {
-        let numberOfWords = data[0].meta.ants[0].length;
         let randomWord = Math.floor(Math.random() * numberOfWords)
         return randomWord
     } else {
@@ -128,11 +114,16 @@ function getAllElements() {
 
     for (let [key, value] of Object.entries(allParagraphs)) {
         console.log(`${key}: ${value}`);
-        if (value == '[object HTMLParagraphElement]' || value == '[object HTMLHeadingElement]') {
+        if (value == '[object HTMLParagraphElement]') {
             value.innerHTML = toHappy(value.innerHTML);
-            
         } else {
             console.log("nah");
         }
     }
+}
+
+function fetching(apiUrl) {
+    //const response = await fetch(apiUrl);
+    console.log(response);
+    return response;
 }
