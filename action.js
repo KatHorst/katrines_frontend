@@ -22,8 +22,8 @@ function addElementToPage(text) {
 function toHappy(strToBeReplaced) {
 
     //needs to be an argument 
-    let text = document.getElementById("happy").value;
-    //let text = strToBeReplaced;
+    //let text = document.getElementById("happy").value;
+    let text = strToBeReplaced;
 
     let prediction = sentiment.predict(text);
     let split_text = stringToArray(text);
@@ -33,10 +33,9 @@ function toHappy(strToBeReplaced) {
     console.log(prediction);
 
     let sensitivity = parseFloat(document.getElementById("number").value);
+
     if (Number.isNaN(sensitivity)) {
         sensitivity = 0.5;
-        console.log(sensitivity);
-    } else {
         console.log(sensitivity);
     }
 
@@ -57,42 +56,45 @@ function toHappy(strToBeReplaced) {
                 
                 let {url, word, key} = apiData;
                 let apiUrl = `${url}${word}${key}`
-            
+
+                //fetching(apiUrl);
+
                 fetch(apiUrl)
                     .then( (data) => data.json())
-                    .then( (word) => createFile(word))
+                    .then(console.log("this shit"))
+                    .then( (word) => createSentence(word, replaced_split_text, i, split_text.length))
                 
-                function createFile(data) {
-                    let randomWord = chooseWord(data, word);
-                    if (randomWord  >= 0) {
-
-                        console.log("Picked word number: " + (randomWord + 1) + " out of " + data[0].meta.ants[0].length + " possible.");
-                        console.log("The opposite is: " + data[0].meta.ants[0][randomWord]);
-
-                        replaced_split_text[i] = (data[0].meta.ants[0][randomWord]);
-
-                        console.log(replaced_split_text)
-
-                        happySentence = arrayToString(replaced_split_text);
-
-                        console.log("A HAPPY SENTENCE", happySentence);
-                        console.log(split_text.length);
-
-                        //because of fetch being async it is run at the very end
-                        //which leads us to have to need to check when to add the 
-                        //new sentence. WHICH DOESNT MATTER CUS WERE NOT ADDING SENTENCES ONLY REPLACING
-                        if (i === (split_text.length - 1)){
-                            //addElementToPage(happySentence);
-                            return happySentence;
-                        }
-                    }
-                }
             } else {
                 console.log("Unpredicted outcome");
             }
         }
     }
     console.log("A SECOND HAPPY SENTENCE", happySentence);
+}
+
+function createSentence(data, arrOfWords, iteration, noOfIterations) {
+    let randomWord = chooseWord(data);
+    if ((randomWord  >= 0 && !isNaN(randomWord) == true)) {
+
+        console.log("Picked word number: " + (randomWord + 1) + " out of " + data[0].meta.ants[0].length + " possible.");
+        console.log("The opposite is: " + data[0].meta.ants[0][randomWord]);
+
+        arrOfWords[iteration] = (data[0].meta.ants[0][randomWord]);
+
+        console.log(arrOfWords)
+
+        happySentence = arrayToString(arrOfWords);
+
+        console.log("A HAPPY SENTENCE", happySentence);
+
+        //because of fetch being async it is run at the very end
+        //which leads us to have to need to check when to add the 
+        //new sentence. WHICH DOESNT MATTER CUS WERE NOT ADDING SENTENCES ONLY REPLACING
+        if (iteration === (noOfIterations - 1)){
+            addElementToPage(happySentence);
+            return happySentence;
+        }
+    }
 }
 
 function chooseWord(data, word) {
@@ -105,7 +107,7 @@ function chooseWord(data, word) {
             return randomWord
         } 
     } else {
-
+        //input code if word is not in array
         console.log("There are no antonyms for this word.");
     }
 }
@@ -125,8 +127,8 @@ function getAllElements() {
     }
 }
 
-function fetching(apiUrl) {
-    //const response = await fetch(apiUrl).then( (data) => data.json())
-    console.log(response);
-    return response;
+async function fetching(apiUrl) {
+    const response = await fetch(apiUrl);
+    const data = await response.json()
+    console.log(data);
 }
