@@ -19,69 +19,65 @@ function addElementToPage(text) {
     element.appendChild(para);
 }
 
-<<<<<<< HEAD
-function toHappy(strOfWordsToReplace) {
-
-    //arrOfWords.... should be text and become a string instead of an array
-    let text = document.getElementById("happy").value;
-    //let text = strOfWordsToReplace;
-=======
-function toHappy(strToBeReplaced) {
+function toHappy(allParagraphs) {
 
     //needs to be an argument 
     //let text = document.getElementById("happy").value;
-    let text = strToBeReplaced;
->>>>>>> 392a786e4bc1bfd28d79f605e9d6771c7e8086b4
+    //allParagraphs[0].innerHTML = "THIS IS A TEST";
 
-    let prediction = sentiment.predict(text);
-    let split_text = stringToArray(text);
-    let replaced_split_text = split_text;
-    let happySentence;
-    console.log(text);
-    console.log(prediction);
-
+    
     let sensitivity = parseFloat(document.getElementById("number").value);
-
+    
     if (Number.isNaN(sensitivity)) {
         sensitivity = 0.5;
-        console.log(sensitivity);
     }
+    
+    for (let j = 0; j < allParagraphs.length; j++) {
+        let text = allParagraphs[j].innerHTML;
+        
+        let prediction = sentiment.predict(text);
+        let split_text = stringToArray(text);
+        let replaced_split_text = split_text;
 
-    if (prediction.score < sensitivity) {
-        for (let i = 0; i < split_text.length; i++) {
-            prediction = sentiment.predict(split_text[i]);
-            console.log(prediction.score);
-            if (prediction.score > sensitivity) {
-                console.log(split_text[i], "Good word :)")
-            } else if (prediction.score <= sensitivity) {
-                console.log(split_text[i], "is a bad word :'(");
+        if (prediction.score > sensitivity) {
+            console.log("The sentence is positive")
+        } else if (prediction.score <= sensitivity) {
+            for (let i = 0; i < split_text.length; i++) {
+                prediction = sentiment.predict(split_text[i]);
+                console.log(prediction.score);
+                if (prediction.score > sensitivity) {
+                    console.log(split_text[i], "Good word :)")
+                } else if (prediction.score <= sensitivity) {
+                    console.log(split_text[i], "is a bad word :'(");
 
-                let apiData = {
-                    url: 'https://dictionaryapi.com/api/v3/references/thesaurus/json/',
-                    word: split_text[i].toLowerCase(),
-                    key: '?key=71bc53b3-250e-4d40-9e89-11f3712c4100',
+                    let apiData = {
+                        url: 'https://dictionaryapi.com/api/v3/references/thesaurus/json/',
+                        word: split_text[i].toLowerCase(),
+                        key: '?key=71bc53b3-250e-4d40-9e89-11f3712c4100',
+                    }
+                    
+                    let {url, word, key} = apiData;
+                    let apiUrl = `${url}${word}${key}`
+
+                    fetching(apiUrl, replaced_split_text, i, split_text.length, allParagraphs, j);
+
+                    /*fetch(apiUrl)
+                        .then( (data) => data.json())
+                        .then(console.log("this shit"))
+                        .then( (word) => createSentence(word, replaced_split_text, i, split_text.length))*/
+                    
+                } else {
+                    console.log("Unpredicted outcome");
                 }
-                
-                let {url, word, key} = apiData;
-                let apiUrl = `${url}${word}${key}`
-
-                //fetching(apiUrl);
-
-                fetch(apiUrl)
-                    .then( (data) => data.json())
-                    .then(console.log("this shit"))
-                    .then( (word) => createSentence(word, replaced_split_text, i, split_text.length))
-                
-            } else {
-                console.log("Unpredicted outcome");
             }
         }
     }
-    console.log("A SECOND HAPPY SENTENCE", happySentence);
 }
 
-function createSentence(data, arrOfWords, iteration, noOfIterations) {
+function createSentence(data, arrOfWords, iteration, noOfIterations, allParagraphs, j) {
     let randomWord = chooseWord(data);
+    let happySentence;
+    console.log(typeof randomWord);
     if ((randomWord  >= 0 && !isNaN(randomWord) == true)) {
 
         console.log("Picked word number: " + (randomWord + 1) + " out of " + data[0].meta.ants[0].length + " possible.");
@@ -95,64 +91,47 @@ function createSentence(data, arrOfWords, iteration, noOfIterations) {
 
         console.log("A HAPPY SENTENCE", happySentence);
 
-        //because of fetch being async it is run at the very end
+        //because of fetch being async it is ran at the very end
         //which leads us to have to need to check when to add the 
         //new sentence. WHICH DOESNT MATTER CUS WERE NOT ADDING SENTENCES ONLY REPLACING
         if (iteration === (noOfIterations - 1)){
-            addElementToPage(happySentence);
-            return happySentence;
+            //addElementToPage(happySentence);
+            allParagraphs[j].innerHTML = happySentence;
+            return 0;
+        }
+    } else {
+
+        arrOfWords[iteration] = randomWord;
+        happySentence = arrayToString(arrOfWords);
+
+        if (iteration === (noOfIterations - 1)) {
+            allParagraphs[j].innerHTML = happySentence;
+            return 0
         }
     }
 }
 
-function chooseWord(data, word) {
+function chooseWord(data) {
     if (data[0].meta.ants[0] !== undefined) {
-        let numberOfWords;
-        numberOfWords = data[0].meta.ants[0].length;
+        let numberOfWords = data[0].meta.ants[0].length;
         //console.log("The original word was: " + word + "\nAnd this is the length of the array for this word: " + data[0].meta.ants[0].length);
         if (data[0].meta.ants[0].length >= 1) {
             let randomWord = Math.floor(Math.random() * numberOfWords)
             return randomWord
         } 
     } else {
-        //input code if word is not in array
         console.log("There are no antonyms for this word.");
+        return data[0].meta.id;
     }
 }
 
 function getAllElements() {
     let allParagraphs = document.getElementsByTagName("p");
-<<<<<<< HEAD
-    let allH1 = document.getElementsByTagName("h1");
-    let allH2 = document.getElementsByTagName("h2");
-    let allH3 = document.getElementsByTagName("h3");
-    let allH4 = document.getElementsByTagName("h4");
-    let allH5 = document.getElementsByTagName("h5");
-=======
->>>>>>> 392a786e4bc1bfd28d79f605e9d6771c7e8086b4
-
-    console.log(allParagraphs.length);
-
-    for (let [key, value] of Object.entries(allParagraphs)) {
-        console.log(`${key}: ${value}`);
-<<<<<<< HEAD
-        if (value == '[object HTMLParagraphElement]' || value == '[object HTMLHeadingElement]' || value == '[object HTMLInputElement]') {
-            console.log("A P or TITLE ELEMENT HAS BEEN FOUND");
-            console.log(value.innerHTML);
-            value.innerHTML = toHappy(value.innerHTML);
-            //value.value = "THIS HAS ALSO NOW CHANGED";
-=======
-        if (value == '[object HTMLParagraphElement]') {
-            value.innerHTML = toHappy(value.innerHTML);
->>>>>>> 392a786e4bc1bfd28d79f605e9d6771c7e8086b4
-        } else {
-            console.log("nah");
-        }
-    }
+    toHappy(allParagraphs);
 }
 
-async function fetching(apiUrl) {
+async function fetching(apiUrl, arrOfWords, iteration, noOfIterations, allParagraphs, j) {
     const response = await fetch(apiUrl);
     const data = await response.json()
-    console.log(data);
+    createSentence(data, arrOfWords, iteration, noOfIterations, allParagraphs, j)
 }
